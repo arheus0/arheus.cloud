@@ -13,31 +13,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
-
-<style>
-  * { cursor: none; }               /* Standart imleci gizle */
-  #custom-cursor {
-    position: fixed;
-    width: 30px; height: 30px;
-    background: radial-gradient(circle, rgba(0,255,255,0.8) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    transition: transform 0.08s ease;
-    z-index: 9999;
-  }
-</style>  
-
-  <script>
-  const cursor = document.getElementById('custom-cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-</script>
+<script>
 <body>
-
- <div id="custom-cursor"></div> 
 <!-- FAVICON (ICON) -->
   <link rel="icon" href="favicon.ico" type="image/x-icon"/>
   <link rel="apple-touch-icon" href="icon.png"/>
@@ -88,6 +65,7 @@
 </body>
 
 </html>
+
 
 
 
