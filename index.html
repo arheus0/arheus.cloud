@@ -27,8 +27,17 @@
     z-index: 9999;
   }
 </style>  
+
+  <script>
+  const cursor = document.getElementById('custom-cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+</script>
 <body>
 
+ <div id="custom-cursor"></div> 
 <!-- FAVICON (ICON) -->
   <link rel="icon" href="favicon.ico" type="image/x-icon"/>
   <link rel="apple-touch-icon" href="icon.png"/>
@@ -79,5 +88,6 @@
 </body>
 
 </html>
+
 
 
