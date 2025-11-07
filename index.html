@@ -77,12 +77,14 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       background: #000;
       overflow: hidden;
       height: 100vh;
       user-select: none;
     }
+
     .player {
       position: fixed;
       bottom: 20px;
@@ -100,10 +102,12 @@
       z-index: 9999;
       transition: all 0.3s ease;
     }
+
     .player:hover {
       background: rgba(30, 30, 60, 0.85);
       border-color: rgba(130, 130, 255, 0.4);
     }
+
     .play-btn {
       width: 42px;
       height: 42px;
@@ -118,26 +122,33 @@
       justify-content: center;
       transition: 0.3s;
     }
+
     .play-btn:hover {
       background: rgba(120, 120, 255, 0.4);
       transform: scale(1.08);
     }
+
     .play-btn.playing {
       color: #fff;
     }
+
     .volume-container {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .volume-slider {
-      -webkit-appearance: none;
-      width: 100px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.2);
-      outline: none;
-    }
+
+.volume-slider {
+  appearance: none;           /* Standart */
+  -webkit-appearance: none;   /* WebKit */
+  -moz-appearance: none;      /* Firefox */
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
     .volume-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 14px;
@@ -147,6 +158,7 @@
       cursor: pointer;
       box-shadow: 0 0 8px rgba(170, 170, 255, 0.5);
     }
+
     .volume-slider::-moz-range-thumb {
       width: 14px;
       height: 14px;
@@ -158,6 +170,8 @@
   </style>
 </head>
 <body>
+
+  <!-- Sadece Oynat/Dur + Ses -->
   <div class="player">
     <button class="play-btn" id="playBtn">▶</button>
     <div class="volume-container">
@@ -166,7 +180,8 @@
     </div>
   </div>
 
-  <audio id="bgMusic" loop preload="auto">
+  <!-- Arka plan müziği -->
+  <audio id="bgMusic" loop>
     <source src="music.ogg" type="audio/ogg">
     <source src="music.mp3" type="audio/mpeg">
     Tarayıcınız ses oynatmayı desteklemiyor.
@@ -177,16 +192,21 @@
     const playBtn = document.getElementById('playBtn');
     const volumeSlider = document.getElementById('volume');
 
-    let isUnlocked = false;
-
-    // Ses açma fonksiyonu
-    const unlockAudio = () => {
-      if (isUnlocked) return;
-      audio.play().then(() => {
-        isUnlocked = true;
-        updateBtn();
-        removeUnlockListeners();
-      }).catch(() => {});
+    // Otomatik başlat
+    const startAudio = () => {
+      audio.volume = volumeSlider.value / 100;
+      audio.play().catch(() => {
+        // Mobil için: ilk etkileşimde aç
+        const unlock = () => {
+          audio.play();
+          updateBtn();
+          document.body.removeEventListener('click', unlock);
+          document.body.removeEventListener('touchstart', unlock);
+        };
+        document.body.addEventListener('click', unlock, { once: true });
+        document.body.addEventListener('touchstart', unlock, { once: true });
+      });
+      updateBtn();
     };
 
     // Buton güncelle
@@ -197,12 +217,8 @@
 
     // Oynat/Duraklat
     playBtn.onclick = () => {
-      if (!isUnlocked) {
-        unlockAudio();
-      } else {
-        audio.paused ? audio.play() : audio.pause();
-        updateBtn();
-      }
+      audio.paused ? audio.play() : audio.pause();
+      updateBtn();
     };
 
     // Ses ayarı
@@ -210,39 +226,13 @@
       audio.volume = volumeSlider.value / 100;
     };
 
-    // Mobil için: ilk dokunma ile sesi aç
-    const unlockOnFirstInteraction = () => {
-      unlockAudio();
-    };
+    // Sayfa yüklendiğinde başla
+    window.onload = startAudio;
 
-    const addUnlockListeners = () => {
-      document.body.addEventListener('click', unlockOnFirstInteraction, { once: true });
-      document.body.addEventListener('touchstart', unlockOnFirstInteraction, { once: true });
-    };
-
-    const removeUnlockListeners = () => {
-      document.body.removeEventListener('click', unlockOnFirstInteraction);
-      document.body.removeEventListener('touchstart', unlockOnFirstInteraction);
-    };
-
-    // Sayfa yüklendiğinde sesi hazırla ama oynatma
-    window.onload = () => {
-      audio.volume = volumeSlider.value / 100;
-      addUnlockListeners();
-
-      // Otomatik başlatma denemesi (masaüstü çalışabilir)
-      audio.play().then(() => {
-        isUnlocked = true;
-        updateBtn();
-        removeUnlockListeners();
-      }).catch(() => {
-        // Hata olursa kullanıcı etkileşimi bekle
-      });
-    };
-
-    // Oynatma durumuna göre buton güncelle
+    // Sürekli güncelle
     audio.onplay = audio.onpause = updateBtn;
   </script>
+
 </body>
 </html>
 
